@@ -1,0 +1,68 @@
+---
+import type { ItemGrid as Props } from '~/types';
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+
+interface GameItem {
+  title: string;
+  partner_present?: string;
+  Date?: string;
+  GAME_IMG: string;
+  BGG: string;
+  icon?: string;
+  classes?: Record<string, string>;
+}
+
+const { items = [], columns, defaultIcon = '', classes = {} } = Astro.props;
+
+const {
+  container: containerClass = '',
+  panel: panelClass = '',
+  title: titleClass = '',
+  description: descriptionClass = '',
+  icon: defaultIconClass = 'text-primary',
+} = classes;
+
+const COLUMN_CLASSES: Record<number, string> = {
+  4: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+  3: 'sm:grid-cols-2 lg:grid-cols-3',
+  2: 'sm:grid-cols-2',
+};
+
+const getGameUrl = (bggId: string) => `/ludoteca/joc?id=${bggId}`;
+---
+
+{
+  items.length > 0 && (
+    <div class={twMerge('grid gap-8 gap-x-12 sm:gap-y-8', columns ? COLUMN_CLASSES[columns] : '', containerClass)}>
+      {(items as GameItem[]).map(({ title, partner_present, Date, GAME_IMG, BGG, icon, classes: itemClasses = {} }) => (
+        <div class={twMerge('relative flex flex-col', panelClass, itemClasses?.panel)} data-title={title}>
+          <a class="flex items-center justify-center" href={getGameUrl(BGG)}>
+            <img alt={title} src={GAME_IMG} class="mb-8 h-60 object-cover" />
+          </a>
+
+          {(icon || defaultIcon) && (
+            <Icon name={icon || defaultIcon} class={twMerge('mb-2 h-10 w-10', defaultIconClass, itemClasses?.icon)} />
+          )}
+
+          <a
+            href={getGameUrl(BGG)}
+            class={twMerge('text-xl font-bold hover:text-primary', titleClass, itemClasses?.title)}
+          >
+            {title}
+          </a>
+
+          {partner_present ? (
+            <p class={twMerge('mt-2 text-muted', descriptionClass, itemClasses?.description)}>
+              Donat per: {partner_present}
+            </p>
+          ) : (
+            Date && (
+              <p class={twMerge('mt-2 text-muted', descriptionClass, itemClasses?.description)}>Des del: {Date}</p>
+            )
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}

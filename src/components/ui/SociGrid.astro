@@ -1,0 +1,73 @@
+---
+import { twMerge } from 'tailwind-merge';
+import type { ItemGrid as Props } from '~/types';
+
+const { items = [], columns, classes = {} } = Astro.props;
+
+const {
+  container: containerClass = '',
+  panel: panelClass = '',
+  title: titleClass = '',
+  description: descriptionClass = '',
+} = classes;
+---
+
+{
+  items && (
+    <div
+      class={twMerge(
+        `grid gap-8 gap-x-12 sm:gap-y-8 ${
+          columns === 4
+            ? 'lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2'
+            : columns === 3
+              ? 'lg:grid-cols-3 sm:grid-cols-2'
+              : columns === 2
+                ? 'sm:grid-cols-2 '
+                : ''
+        }`,
+        containerClass
+      )}
+    >
+      {items.map(
+        ({
+          title,
+          partner_present,
+          image,
+          type,
+          Data,
+          Date,
+          href,
+          BGG,
+          icon,
+          callToAction,
+          classes: itemClasses = {},
+        }) => (
+          <div class={twMerge('relative flex flex-col', panelClass, itemClasses?.panel)}>
+            <img alt="img" src={image} class="h-60 object-cover object-top mb-8" />
+
+            <div class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)}>
+              <a href={`/socis/${href}`}>{title}</a>
+            </div>
+
+            {partner_present ? (
+              <p
+                class={twMerge('text-muted mt-2', descriptionClass, itemClasses?.description)}
+                set:html={`Donat per: ${partner_present}`}
+              />
+            ) : (
+              <>
+                {Date && (
+                  <p
+                    class={twMerge('text-muted mt-2', descriptionClass, itemClasses?.description)}
+                    set:html={`Des del: ${Date}`}
+                  />
+                )}
+                <br />
+              </>
+            )}
+          </div>
+        )
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,143 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+media_folder: 'src/assets/images'
+public_folder: 'src/assets/images'
+
+logo_url: https://osonajuga.netlify.app/_astro/logo.BH1FDaFe.png
+
+collections:
+  - name: 'post'
+    label: 'Post'
+    folder: 'src/content/post'
+    create: true
+    fields:
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Excerpt', name: 'excerpt', widget: 'string' }
+      - { label: 'Category', name: 'category', widget: 'string' }
+      - {
+          label: 'Tags',
+          name: 'tags',
+          widget: 'list',
+          allow_add: true,
+          allow_delete: true,
+          collapsed: false,
+          field: { label: 'Tag', name: 'tag', widget: 'string' },
+        }
+      - { label: 'Image', name: 'image', widget: 'string' }
+      - { label: 'Publish Date', name: 'publishDate', widget: 'datetime', required: false }
+      - { label: 'Author', name: 'author', widget: 'string' }
+      - { label: 'Content', name: 'body', widget: 'markdown' }
+
+  - name: 'jocs'
+    label: 'Jocs'
+    folder: 'src/content/jocs'
+    slug: '{{fields.game}}'
+    create: true
+    fields:
+      - { label: 'Id', name: 'id', widget: 'number' }
+      - { label: 'Game', name: 'game', widget: 'string' }
+      - { label: 'Member/Reserve', name: 'member_reserve', widget: 'string', required: false }
+      - { label: 'Reservation Start', name: 'reservation_start', widget: 'datetime', required: false }
+      - { label: 'Reservation End', name: 'reservation_end', widget: 'datetime', required: false }
+      - { label: 'Acquired From', name: 'acquired_from', widget: 'string', required: false }
+      - { label: 'Partner Present', name: 'partner_present', widget: 'string', required: false }
+      - { label: 'Price (zero if donation)', name: 'price', widget: 'string', required: false }
+      - { label: 'Date of purchase', name: 'date', widget: 'datetime' }
+      - { label: 'BGG ID', name: 'bgg', widget: 'number', required: false }
+      - { label: 'Game Image', name: 'game_image', widget: 'image' }
+      - {
+          label: 'Extras',
+          name: 'extras',
+          widget: 'object',
+          required: false,
+          fields:
+            [
+              { label: 'Author', name: 'author', widget: 'string' },
+              { label: 'Year of publication', name: 'year_of_publication', widget: 'datetime' },
+              { label: 'Duration in minutes', name: 'duration', widget: 'number' },
+              { label: 'Number of players', name: 'number_of_players', widget: 'number' },
+              {
+                label: 'Mechanics',
+                name: 'mechanics',
+                widget: 'list',
+                allow_add: true,
+                allow_delete: true,
+                collapsed: false,
+                field: { label: 'Mechanic', name: 'mechanic', widget: 'string' },
+              },
+            ],
+        }
+
+  - name: 'socis'
+    label: 'Socis'
+    folder: 'src/content/socis'
+    slug: '{{fields.name}}-{{fields.surname}}'
+    create: true
+    fields:
+      - { label: 'Id', name: 'id', widget: 'number' }
+      - { label: 'Name & Surnames', name: 'name', widget: 'string' }
+      - { label: 'Image', name: 'image', widget: 'image' }
+      - { label: 'Partner since', name: 'date', widget: 'datetime' }
+      - { label: 'Number of games owned', name: 'games_owned', widget: 'number', required: false }
+      - {
+          label: 'Role',
+          name: 'role',
+          widget: 'select',
+          required: false,
+          options: ['President', 'Tresorer', 'Secretari', 'Vocal', 'Soci honorífic', 'Soci fundador', 'Meeple', 'Soci'],
+          default: 'Soci',
+        }
+      - {
+          label: 'Favorite game',
+          name: 'favorite_game',
+          widget: 'object',
+          required: false,
+          fields:
+            [
+              { label: 'Game', name: 'game', widget: 'string' },
+              { label: 'Image', name: 'image', widget: 'image' },
+              { label: 'URL (BGG)', name: 'url', widget: 'string' },
+            ],
+        }
+      - {
+          label: 'Partner of the month',
+          name: 'partner_of_the_month',
+          widget: 'boolean',
+          default: false,
+          required: false,
+        }
+      - { label: 'Content', name: 'body', widget: 'markdown' }
+
+  - name: 'pagines'
+    label: 'pagines'
+    folder: 'src/content/pagines'
+    slug: '{{fields.title}}'
+    create: true
+    fields:
+      - { label: 'Layout', name: 'layout', widget: 'hidden', default: '~/layouts/MarkdownLayout.astro' }
+      - { label: 'Title', name: 'title', widget: 'string' }
+      - { label: 'Content', name: 'body', widget: 'markdown' }
+
+  - name: 'stats'
+    label: 'Estadístiques'
+    folder: 'src/content/stats'
+    slug: '{{fields.title}}'
+    create: true
+    fields:
+      - { label: 'Títol', name: 'title', widget: 'string' }
+      - { label: 'Valor', name: 'value', widget: 'number' }
+      - { label: 'Ordre', name: 'order', widget: 'number', required: false }
+
+  - name: 'faqs'
+    label: 'Preguntes freqüents'
+    folder: 'src/content/faqs'
+    slug: '{{fields.question}}'
+    create: true
+    fields:
+      - { label: 'Pregunta', name: 'question', widget: 'string' }
+      - { label: 'Resposta', name: 'answer', widget: 'text' }
+      - { label: 'Ordre', name: 'order', widget: 'number', required: false }
+      - { label: 'Publicat', name: 'published', widget: 'boolean', default: true, required: false }

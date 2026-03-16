@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+
+const pages = await getCollection('pagines');
+
+const page = pages.find((page) => page.data.title === 'Glossari');
+
+const rendered = await page?.render();
+const PageContent = rendered?.Content;
+---
+
+<>
+  <PageContent />
+</>

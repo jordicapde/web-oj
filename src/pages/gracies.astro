@@ -1,0 +1,21 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Gràcies pel teu missatge',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="py-16 sm:py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-8 font-heading">
+        Gràcies pel teu missatge!
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-slate-400 mb-8">
+        Hem rebut el teu missatge i et respondrem el més aviat possible.
+      </p>
+      <a href="/" class="btn-primary">Tornar a l'inici</a>
+    </div>
+  </section>
+</Layout>

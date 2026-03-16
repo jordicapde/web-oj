@@ -1,0 +1,44 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { getCollection } from 'astro:content';
+
+const DEFAULT_SORT_ORDER = 999;
+
+const faqsCollection = await getCollection('faqs');
+const publishedFaqs = faqsCollection.filter((faq) => faq.data.published !== false);
+
+const sortedFaqs = publishedFaqs.sort((a, b) => {
+  const aOrder = a.data.order ?? DEFAULT_SORT_ORDER;
+  const bOrder = b.data.order ?? DEFAULT_SORT_ORDER;
+  return aOrder - bOrder;
+});
+
+const faqItems = sortedFaqs.map((faq) => ({
+  title: faq.data.question,
+  description: faq.data.answer,
+}));
+
+const metadata = {
+  title: `Osona Juga | Associació de jocs de taula d'Osona`,
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero title="Benvinguts a Osona Juga!" image={{ src: '~/assets/images/games.jpg', alt: 'Osona Juga' }}>
+    <Fragment slot="subtitle">
+      Aquesta és la pàgina web de l'associació de jocs de taula <span class="font-bold text-secondary">Osona Juga</span
+      >. Uneix-te a la nostra <span class="font-bold text-secondary">comunitat</span> per jugar, aprendre i compartir la
+      passió pels jocs de taula</Fragment
+    >.
+  </Hero>
+  <FAQs title="Preguntes freqüents" subtitle="" tagline="FAQs" classes={{ container: 'max-w-6xl' }} items={faqItems} />
+
+  <BlogLatestPosts title="Últimes notícies" information={``} />
+</Layout>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>

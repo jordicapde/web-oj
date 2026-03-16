@@ -1,0 +1,37 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+export interface Props {
+  frontmatter?: {
+    title?: string;
+  };
+  sociData?: any;
+}
+
+const { sociData } = Astro.props;
+---
+
+<Layout>
+  <section class="px-4 py-16 sm:px-6 mx-auto lg:px-8 lg:py-20 max-w-4xl w-full md:w-2/3">
+    <div class="text-xl font-bold">
+      <a href={`/socis/1`}>Tornar</a>
+    </div>
+    <div
+      class="mx-auto prose prose-lg max-w-4xl dark:prose-invert dark:prose-headings:text-slate-300 prose-md prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-md prose-img:shadow-lg mt-8"
+    >
+      {
+        sociData && (
+          <div class="mt-4">
+            <p>
+              <strong>Email:</strong> {sociData.data.email}
+            </p>
+            <p>
+              <strong>Joined on:</strong> {new Date(sociData.data.date).toLocaleDateString()}
+            </p>
+          </div>
+        )
+      }
+      <slot />
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,22 @@
+---
+import Image from '~/components/common/Image.astro';
+---
+
+<span
+  class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
+>
+  <Fragment slot="title">
+    <Image
+      src="~/assets/images/logo.png"
+      class="h-20"
+      widths={[200, 400]}
+      width={200}
+      sizes="(max-width: 900px) 200px, 400px"
+      alt="Osona Juga Logo"
+      aspectRatio="16:9"
+      layout="contained"
+      loading="lazy"
+      decoding="async"
+    />
+  </Fragment>
+</span>

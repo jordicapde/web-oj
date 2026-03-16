@@ -1,0 +1,73 @@
+---
+import Hero from '~/components/widgets/Hero.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+import { getCollection } from 'astro:content';
+
+const DEFAULT_ORDER = 999;
+
+const jocsCollection = await getCollection('jocs');
+const socisCollection = await getCollection('socis');
+const statsCollection = await getCollection('stats');
+
+const jocsCount = jocsCollection.length;
+const socisCount = socisCollection.length;
+
+const socisStatEntry = statsCollection.find((stat) => stat.data.title === 'Socis');
+const municipisStatEntry = statsCollection.find((stat) => stat.data.title === 'Municipis');
+
+const socisValue = socisStatEntry?.data.value ?? socisCount;
+const municipisValue = municipisStatEntry?.data.value ?? 16;
+
+const stats = [
+  { title: 'Socis', amount: socisValue.toString() },
+  { title: 'Jocs', amount: jocsCount.toString() },
+  { title: 'Municipis', amount: municipisValue.toString() },
+];
+
+const sortedStats = stats.sort((a, b) => {
+  const aOrder = statsCollection.find((s) => s.data.title === a.title)?.data.order ?? DEFAULT_ORDER;
+  const bOrder = statsCollection.find((s) => s.data.title === b.title)?.data.order ?? DEFAULT_ORDER;
+  return aOrder - bOrder;
+});
+
+const metadata = {
+  title: 'Qui som',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    tagline="Qui som?"
+    image={{
+      src: '~/assets/images/qui-som.jpeg',
+      alt: 'Jugant a osona juga',
+    }}
+  >
+    <Fragment slot="title">
+      Osona Juga <br />
+      <span class="text-accent dark:text-white highlight text-4xl tracking-tight"
+        >La teva associació de jocs de taula a Osona</span
+      >
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      <br />
+      <span class="text-secondary font-bold">Osona Juga</span> som un grup de persones entusiastes dels jocs de taula moderns
+      que ens trobem per jugar i fer jugar. Constituïts com a associació sense ànim de lucre des del <span
+        class="text-secondary font-bold">2002</span
+      >, creiem fermament en el poder del joc com a força transformadora.
+      <br />
+      <br />
+      Organitzem trobades lúdiques a la seu de l'associació, a <span class="text-secondary font-bold">Calldetenes</span
+      >, i també esdeveniments per tots els municipis de la comarca on persones de totes les edats poden descobrir,
+      aprendre i gaudir dels jocs de taula. A través del joc, fomentem la creativitat, la cooperació i el bon rotllo,
+      connectant la comunitat i creant espais segurs on tothom és benvingut.
+      <br />
+      <br />
+      <span class="text-secondary font-bold">Una partideta?</span>
+    </Fragment>
+  </Hero>
+  <Stats stats={sortedStats} />
+</Layout>

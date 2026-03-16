@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+
+const pages = await getCollection('pagines');
+
+const amics = pages.find((page) => page.data.title === 'Amics');
+
+const rendered = await amics?.render();
+const PageContent = rendered?.Content;
+---
+
+<>
+  <PageContent />
+</>

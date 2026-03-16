@@ -1,0 +1,11 @@
+---
+const { dt } = Astro.props;
+interface Props {
+  dt: string;
+}
+
+const content: string = await Astro.slots.render('default');
+---
+
+<h6 set:html={dt} />
+<div class="dd ml-8" set:html={content} />

@@ -1,0 +1,569 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+
+const allGames = await getCollection('jocs');
+
+const gamesData = allGames.map((game) => ({
+  bgg: game.data.bgg,
+  title: game.data.game,
+  image: game.data.game_image,
+  extras: game.data.extras,
+  partner_present: game.data.partner_present,
+  price: game.data.price,
+  date: game.data.date,
+}));
+
+const metadata = { title: 'Joc' };
+---
+
+<Layout metadata={metadata}>
+  <section class="relative h-32 w-full overflow-hidden md:h-40">
+    <div class="absolute inset-0">
+      <img id="hero-image" src="" alt="Game banner" class="h-full w-full object-cover" />
+      <div class="absolute inset-0 bg-black/60"></div>
+    </div>
+    <div class="relative flex h-full items-center justify-center">
+      <div class="text-center">
+        <p class="text-base font-bold uppercase tracking-wide text-white/80">Els jocs de l'associació</p>
+        <h1 id="hero-title" class="text-5xl font-bold text-white"></h1>
+      </div>
+    </div>
+  </section>
+
+  <div id="game">
+    <div class="flex justify-center">
+      <span class="loader"></span>
+    </div>
+    <Content2 columns={2}>
+      <slot slot="content">
+        <h3 id="title" class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl"></h3>
+        <p id="design"></p>
+        <br />
+        <p class="info-label">
+          Any de publicació: <span class="info-value" id="subtitle"></span>
+        </p>
+        <p class="info-label">
+          Duració: <span class="info-value" id="duration"></span>
+        </p>
+        <p class="info-label">
+          Nombre de jugadors: <span class="info-value" id="players"></span>
+        </p>
+        <p class="info-label">Mecàniques:</p>
+        <ul class="mt-2 p-2" id="mechanics"></ul>
+        <br />
+        <a href="" target="_blank" class="font-bold text-secondary hover:underline" id="linkToBGG">Enllaç a la BGG</a>
+        <br />
+        <br />
+        <button id="favoriteBtn" class="favorite-btn" title="Afegir a preferits">
+          <svg
+            id="heartIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            ></path>
+          </svg>
+          <span id="favoriteText" class="ml-2">Afegir a preferits</span>
+        </button>
+      </slot>
+
+      <slot slot="image">
+        <img
+          id="image"
+          src=""
+          alt="Game image"
+          class="h-auto w-full rounded-lg object-cover shadow-lg transition-transform hover:scale-105"
+        />
+      </slot>
+
+      <Fragment slot="bg">
+        <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+      </Fragment>
+    </Content2>
+
+    <div class="mx-auto mb-8 mt-8 flex max-w-4xl items-center justify-between px-4">
+      <button id="prevGame" class="btn-nav btn-nav-arrow" disabled title="Anar anterior">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <a href="/ludoteca/1" class="btn-nav btn-nav-center">Tornar a la ludoteca</a>
+      <button id="nextGame" class="btn-nav btn-nav-arrow" disabled title="Anar següent">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" class="pointer-events-none fixed left-0 top-0 z-50 hidden h-full w-full"></canvas>
+</Layout>
+
+<script is:inline define:vars={{ gamesData }}>
+  const BGG_API_URL = 'https://bgg-json.azurewebsites.net/thing';
+  const CONFETTI_PARTICLES_PER_POINT = 50;
+  const CONFETTI_COLORS = [
+    '#ff6b6b',
+    '#4ecdc4',
+    '#45b7d1',
+    '#96ceb4',
+    '#ffd93d',
+    '#ff9ff3',
+    '#ff4757',
+    '#2ed573',
+    '#1e90ff',
+    '#ffa502',
+  ];
+  const FAVORITE_UPDATE_DELAY = 500;
+
+  const localGamesData = gamesData;
+  const urlParams = new URLSearchParams(window.location.search);
+  const gameId = urlParams.get('id');
+
+  const $ = (id) => document.getElementById(id);
+
+  function findLocalGame(bggId) {
+    return localGamesData.find((game) => String(game.bgg) === String(bggId));
+  }
+
+  function hideLoader() {
+    document.getElementsByClassName('loader')[0].style.display = 'none';
+  }
+
+  function setTextContent(id, text) {
+    const el = $(id);
+    if (el) el.textContent = text;
+  }
+
+  function setHref(id, url) {
+    const el = $(id);
+    if (el) el.href = url;
+  }
+
+  function setSrc(id, url) {
+    const el = $(id);
+    if (el) el.src = url;
+  }
+
+  function populateMechanics(mechanics) {
+    const ul = $('mechanics');
+    if (!ul) return;
+    ul.innerHTML = '';
+    mechanics.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = `- ${item}`;
+      ul.appendChild(li);
+    });
+  }
+
+  function displayGameData(data) {
+    hideLoader();
+    setTextContent('title', data.name);
+    setTextContent('hero-title', data.name);
+    setSrc('hero-image', data.image);
+    setTextContent('subtitle', data.yearPublished);
+    setTextContent('design', data.designers?.join(', ') || '');
+    setTextContent('duration', `${data.playingTime} minuts`);
+    setTextContent('players', `De ${data.minPlayers} a ${data.maxPlayers} jugadors`);
+    setHref('linkToBGG', `https://boardgamegeek.com/boardgame/${data.gameId}`);
+    populateMechanics(data.mechanics || []);
+    setSrc('image', data.image);
+  }
+
+  function displayLocalGameData(bggId) {
+    const game = findLocalGame(bggId);
+    hideLoader();
+
+    if (!game) {
+      setTextContent('title', 'Joc no trobat');
+      setTextContent('hero-title', 'Joc no trobat');
+      setTextContent('design', '');
+      setTextContent('subtitle', 'No disponible');
+      setTextContent('duration', 'No disponible');
+      setTextContent('players', 'No disponible');
+      $('mechanics').innerHTML = '<li>- No disponible</li>';
+      $('image').style.display = 'none';
+      return;
+    }
+
+    setTextContent('title', game.title);
+    setTextContent('hero-title', game.title);
+    if (game.image) {
+      setSrc('hero-image', game.image);
+      setSrc('image', game.image);
+    } else {
+      $('image').style.display = 'none';
+    }
+    setTextContent(
+      'subtitle',
+      game.extras?.year_of_publication ? new Date(game.extras.year_of_publication).getFullYear() : 'No disponible'
+    );
+    setTextContent('design', '');
+    setTextContent('duration', `${game.extras?.duration || 'No disponible'} minuts`);
+    setTextContent('players', `Fins a ${game.extras?.number_of_players || 'No disponible'} jugadors`);
+    setHref('linkToBGG', `https://boardgamegeek.com/boardgame/${bggId}`);
+    populateMechanics(game.extras?.mechanics || []);
+  }
+
+  async function fetchGameData() {
+    try {
+      const response = await fetch(`${BGG_API_URL}/${gameId}`);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+      const data = await response.json();
+      if (data) displayGameData(data);
+    } catch {
+      displayLocalGameData(gameId);
+    }
+  }
+
+  function setupNavigation() {
+    const sortedGames = [...localGamesData].sort((a, b) => a.title.localeCompare(b.title));
+    const currentIndex = sortedGames.findIndex((game) => String(game.bgg) === String(gameId));
+    const prevButton = $('prevGame');
+    const nextButton = $('nextGame');
+
+    if (currentIndex > 0) {
+      prevButton.disabled = false;
+      prevButton.onclick = () => {
+        window.location.href = `/ludoteca/joc?id=${sortedGames[currentIndex - 1].bgg}`;
+      };
+    }
+
+    if (currentIndex < sortedGames.length - 1) {
+      nextButton.disabled = false;
+      nextButton.onclick = () => {
+        window.location.href = `/ludoteca/joc?id=${sortedGames[currentIndex + 1].bgg}`;
+      };
+    }
+  }
+
+  function getFavorites() {
+    const favs = localStorage.getItem('gameFavorites');
+    return favs ? JSON.parse(favs) : [];
+  }
+
+  function saveFavorites(favorites) {
+    localStorage.setItem('gameFavorites', JSON.stringify(favorites));
+  }
+
+  function getCurrentGameInfo() {
+    const titleElement = $('title');
+    return {
+      id: gameId || null,
+      name: titleElement?.textContent || '',
+    };
+  }
+
+  function findFavoriteIndex(favorites, gameInfo) {
+    return favorites.findIndex((fav) => {
+      if (typeof fav === 'string') return fav === gameId;
+      if (gameInfo.id) return fav.id === gameInfo.id;
+      return fav.name === gameInfo.name;
+    });
+  }
+
+  function showConfetti() {
+    const canvas = $('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.classList.remove('hidden');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confetti = [];
+    const explosionPoints = [
+      { x: canvas.width * 0.3, y: canvas.height * 0.4 },
+      { x: canvas.width * 0.7, y: canvas.height * 0.4 },
+      { x: canvas.width * 0.5, y: canvas.height * 0.3 },
+    ];
+
+    explosionPoints.forEach((point) => {
+      for (let i = 0; i < CONFETTI_PARTICLES_PER_POINT; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 15 + 5;
+        confetti.push({
+          x: point.x,
+          y: point.y,
+          vx: Math.cos(angle) * velocity,
+          vy: Math.sin(angle) * velocity,
+          color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+          size: Math.random() * 6 + 3,
+          rotation: Math.random() * 360,
+          rotationSpeed: Math.random() * 20 - 10,
+          life: 1.0,
+          decay: Math.random() * 0.02 + 0.01,
+        });
+      }
+    });
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = confetti.length - 1; i >= 0; i--) {
+        const p = confetti[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
+        p.vy += 0.3;
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+        p.life -= p.decay;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+
+        const shape = Math.floor(Math.random() * 3);
+        if (shape === 0) {
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        } else if (shape === 1) {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(0, -p.size / 2);
+          ctx.lineTo(-p.size / 2, p.size / 2);
+          ctx.lineTo(p.size / 2, p.size / 2);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        ctx.restore();
+
+        if (p.life <= 0 || p.y > canvas.height + 50) {
+          confetti.splice(i, 1);
+        }
+      }
+
+      if (confetti.length > 0) {
+        requestAnimationFrame(animate);
+      } else {
+        canvas.classList.add('hidden');
+      }
+    }
+
+    animate();
+  }
+
+  function updateFavoriteUI(isFavorite) {
+    const heartIcon = $('heartIcon');
+    const favoriteText = $('favoriteText');
+    const favoriteBtn = $('favoriteBtn');
+
+    heartIcon.setAttribute('fill', isFavorite ? 'currentColor' : 'none');
+    favoriteText.textContent = isFavorite ? 'Eliminar de preferits' : 'Afegir a preferits';
+    favoriteBtn.classList.toggle('is-favorite', isFavorite);
+  }
+
+  function toggleFavorite() {
+    const favorites = getFavorites();
+    const gameInfo = getCurrentGameInfo();
+    const existingIndex = findFavoriteIndex(favorites, gameInfo);
+
+    if (existingIndex > -1) {
+      favorites.splice(existingIndex, 1);
+      updateFavoriteUI(false);
+    } else {
+      favorites.push(gameInfo);
+      updateFavoriteUI(true);
+      showConfetti();
+    }
+
+    saveFavorites(favorites);
+  }
+
+  function updateFavoriteButton() {
+    setTimeout(() => {
+      const favorites = getFavorites();
+      const gameInfo = getCurrentGameInfo();
+      const isFavorite = findFavoriteIndex(favorites, gameInfo) > -1;
+      updateFavoriteUI(isFavorite);
+    }, FAVORITE_UPDATE_DELAY);
+  }
+
+  $('favoriteBtn').addEventListener('click', toggleFavorite);
+  fetchGameData();
+  setupNavigation();
+  updateFavoriteButton();
+</script>
+
+<style>
+  .info-value {
+    @apply font-normal text-black/80 dark:text-white/80;
+  }
+
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #fff;
+    border-bottom-color: black;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .btn-nav {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--aw-color-primary);
+    color: white;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: 2px solid var(--aw-color-primary);
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    background-color: var(--aw-color-secondary);
+    border-color: var(--aw-color-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-nav:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-nav:disabled {
+    background-color: transparent;
+    color: var(--aw-color-text-muted);
+    border: 2px solid var(--aw-color-text-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.5;
+  }
+
+  .btn-nav:disabled svg {
+    opacity: 0.5;
+  }
+  .btn-nav-arrow {
+    padding: 0.75rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+  .btn-nav-arrow svg {
+    width: 24px;
+    height: 24px;
+  }
+  .btn-nav-center {
+    min-width: 200px;
+  }
+
+  .dark .btn-nav {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .dark .btn-nav:hover:not(:disabled) {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  @media (max-width: 640px) {
+    .btn-nav-center {
+      min-width: auto;
+      padding: 0.75rem 1rem;
+    }
+    .btn-nav-arrow {
+      width: 44px;
+      height: 44px;
+      padding: 0.625rem;
+    }
+  }
+
+  .favorite-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--aw-color-accent);
+    color: white;
+    border: 2px solid var(--aw-color-accent);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .favorite-btn:hover {
+    background-color: var(--aw-color-secondary);
+    border-color: var(--aw-color-secondary);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .favorite-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .favorite-btn.is-favorite {
+    background-color: var(--aw-color-primary);
+    border-color: var(--aw-color-primary);
+    color: white;
+  }
+
+  .favorite-btn.is-favorite:hover {
+    background-color: var(--aw-color-secondary);
+    border-color: var(--aw-color-secondary);
+    color: white;
+  }
+
+  .favorite-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  .dark .favorite-btn {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .dark .favorite-btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+</style>

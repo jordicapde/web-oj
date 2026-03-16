@@ -1,0 +1,339 @@
+---
+import type { GetStaticPathsOptions, Page } from 'astro';
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Jocs from '~/components/ui/Jocs.astro';
+
+interface JocItem {
+  ID: string;
+  title: string;
+  partner_present: string;
+  Date: string;
+  BGG: string;
+  GAME_IMG: string;
+}
+
+interface Props {
+  page: Page<JocItem>;
+}
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const GAMES_PER_PAGE = 28;
+  const jocsCollection = await getCollection('jocs');
+  const sortedJocs = jocsCollection.sort((a, b) => parseInt(a.data.id) - parseInt(b.data.id));
+  const allJocs = sortedJocs.map((joc) => ({
+    ID: joc.data.id,
+    title: joc.data.game,
+    partner_present: joc.data.partner_present,
+    Date: new Date(joc.data.date).toLocaleDateString('es'),
+    BGG: joc.data.bgg,
+    GAME_IMG: joc.data.game_image,
+  }));
+  return paginate(allJocs, { pageSize: GAMES_PER_PAGE });
+}
+
+const { page } = Astro.props;
+const jocsCollection = await getCollection('jocs');
+const allJocsItems = jocsCollection
+  .map((joc) => ({
+    ID: joc.data.id,
+    title: joc.data.game,
+    partner_present: joc.data.partner_present,
+    Date: new Date(joc.data.date).toLocaleDateString('es'),
+    BGG: joc.data.bgg,
+    GAME_IMG: joc.data.game_image,
+  }))
+  .sort((a, b) => parseInt(a.ID) - parseInt(b.ID));
+
+const metadata = { title: 'Ludoteca' };
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline={`Els ${jocsCollection.length} jocs de l'associació`} title="Ludoteca" />
+
+  <form class="mx-auto mb-8 max-w-md px-2" onsubmit="return false">
+    <label for="jocsSearch" class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">Cerca</label>
+    <div class="relative">
+      <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+        <svg
+          class="h-4 w-4 text-gray-500 dark:text-gray-400"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+        </svg>
+      </div>
+      <input
+        type="search"
+        id="jocsSearch"
+        class="block w-full rounded-lg border border-secondary bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-secondary focus:ring-secondary dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-500"
+        placeholder="Cercar un joc..."
+      />
+    </div>
+  </form>
+
+  <div id="favoritesToggleContainer" class="mb-6 hidden items-center justify-center">
+    <label class="inline-flex cursor-pointer items-center">
+      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Mostrar preferits</span>
+      <input type="checkbox" id="favoritesToggle" class="peer sr-only" />
+      <div
+        class='relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[""] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:peer-focus:ring-blue-800'
+      >
+      </div>
+    </label>
+  </div>
+
+  <p id="searchResultsCount" class="mb-8 hidden text-center text-lg font-medium"></p>
+
+  <div id="favoritesSection" class="hidden">
+    <h2 class="mb-4 text-center text-2xl font-bold">Els teus jocs preferits</h2>
+    <div id="favoritesList" class="p-6"></div>
+    <hr class="my-8 border-gray-300 dark:border-gray-700" />
+    <h2 class="mb-4 text-center text-2xl font-bold">Tots els jocs</h2>
+  </div>
+
+  <div id="jocsList" class="p-6">
+    <Jocs
+      items={page.data}
+      columns={3}
+      classes={{
+        container: 'p-4',
+        panel: 'relative flex flex-col card-glass p-6',
+      }}
+    />
+  </div>
+
+  <div id="paginationControls" class="flex items-center justify-center py-8">
+    <div class="flex items-center space-x-6 rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-800">
+      <div class="text-sm text-gray-600 dark:text-gray-300">
+        Pàgina {page.currentPage} de {page.lastPage}
+      </div>
+      <div class="flex space-x-2">
+        {
+          page.url.prev && (
+            <a
+              href={page.url.prev}
+              class="flex items-center rounded-md bg-white px-4 py-2 shadow transition-colors duration-200 hover:bg-primary-50 dark:bg-gray-700 dark:hover:bg-gray-600"
+            >
+              <span class="mr-1">←</span>
+            </a>
+          )
+        }
+        <div class="rounded-md bg-primary px-4 py-2 font-semibold text-white">
+          {page.currentPage}
+        </div>
+        {
+          page.url.next && (
+            <a
+              href={page.url.next}
+              class="flex items-center rounded-md bg-white px-4 py-2 shadow transition-colors duration-200 hover:bg-primary-50 dark:bg-gray-700 dark:hover:bg-gray-600"
+            >
+              <span class="ml-1">→</span>
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <div id="allJocsData" class="hidden" data-jocs={JSON.stringify(allJocsItems)}></div>
+</Layout>
+
+<script>
+  const CARD_CLASSES = 'relative flex flex-col card-glass p-6';
+  const GRID_CLASSES = 'grid gap-8 gap-x-12 sm:gap-y-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3';
+
+  interface GameFavorite {
+    id: string;
+    name: string;
+  }
+
+  type FavoriteItem = string | GameFavorite;
+
+  interface JocData {
+    BGG: string;
+    title: string;
+    GAME_IMG: string;
+    partner_present?: string;
+    Date?: string;
+  }
+
+  function getFavorites(): FavoriteItem[] {
+    const favs = localStorage.getItem('gameFavorites');
+    return favs ? JSON.parse(favs) : [];
+  }
+
+  function getToggleState(): boolean {
+    const state = localStorage.getItem('showPreferredGames');
+    return state === null ? true : state === 'true';
+  }
+
+  function saveToggleState(show: boolean): void {
+    localStorage.setItem('showPreferredGames', show.toString());
+  }
+
+  function getAllJocs(): JocData[] {
+    const el = document.getElementById('allJocsData');
+    if (!el) return [];
+    try {
+      return JSON.parse(el.getAttribute('data-jocs') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function isFavorite(joc: JocData, favorites: FavoriteItem[]): boolean {
+    return favorites.some((fav) => {
+      if (typeof fav === 'string') return fav === String(joc.BGG);
+      if (joc.BGG && fav.id) return String(fav.id) === String(joc.BGG);
+      return fav.name === joc.title;
+    });
+  }
+
+  function createGameCard(joc: JocData, showFavorite = false): string {
+    const dateInfo = joc.partner_present
+      ? `<p class="text-muted mt-2">Donat per: ${joc.partner_present}</p>`
+      : joc.Date
+        ? `<p class="text-muted mt-2">Des del: ${joc.Date}</p>`
+        : '';
+    const favoriteTag = showFavorite
+      ? '<div class="mt-2"><span class="text-secondary">♥</span> <span class="text-sm text-gray-600 dark:text-gray-400">Preferit</span></div>'
+      : '';
+
+    return `
+      <div class="${CARD_CLASSES}">
+        <a class="flex justify-center items-center" href="/ludoteca/joc?id=${joc.BGG}">
+          <img alt="${joc.title}" src="${joc.GAME_IMG}" class="h-60 object-cover mb-8" />
+        </a>
+        <div class="text-xl font-bold">
+          <a href="/ludoteca/joc?id=${joc.BGG}">${joc.title}</a>
+        </div>
+        ${dateInfo}
+        ${favoriteTag}
+      </div>
+    `;
+  }
+
+  function displayFavorites(): void {
+    const favorites = getFavorites();
+    const favoritesSection = document.getElementById('favoritesSection');
+    const favoritesList = document.getElementById('favoritesList');
+    const favoritesToggleContainer = document.getElementById('favoritesToggleContainer');
+    const favoritesToggle = document.getElementById('favoritesToggle') as HTMLInputElement;
+
+    if (!favorites.length || !favoritesSection || !favoritesList || !favoritesToggleContainer || !favoritesToggle) {
+      if (favoritesSection) favoritesSection.style.display = 'none';
+      if (favoritesToggleContainer) favoritesToggleContainer.style.display = 'none';
+      return;
+    }
+
+    const allJocs = getAllJocs();
+    const favoriteGames = allJocs.filter((joc) => isFavorite(joc, favorites));
+
+    if (favoriteGames.length === 0) {
+      favoritesSection.style.display = 'none';
+      favoritesToggleContainer.style.display = 'none';
+      return;
+    }
+
+    favoritesToggleContainer.style.display = 'flex';
+    const savedToggleState = getToggleState();
+    favoritesToggle.checked = savedToggleState;
+    favoritesSection.style.display = savedToggleState ? 'block' : 'none';
+    favoritesList.innerHTML = `<div class="${GRID_CLASSES}">${favoriteGames.map((joc) => createGameCard(joc, true)).join('')}</div>`;
+  }
+
+  function setupSearch(): void {
+    const searchInput = document.getElementById('jocsSearch') as HTMLInputElement;
+    const jocsList = document.getElementById('jocsList');
+    const paginationControls = document.getElementById('paginationControls');
+    const searchResultsCount = document.getElementById('searchResultsCount');
+
+    if (!searchInput || !jocsList || !paginationControls || !searchResultsCount) return;
+
+    const allJocs = getAllJocs();
+    const originalHtml = jocsList.innerHTML;
+
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+
+      if (searchTerm === '') {
+        jocsList.innerHTML = originalHtml;
+        paginationControls.style.display = '';
+        searchResultsCount.style.display = 'none';
+        displayFavorites();
+        return;
+      }
+
+      const filteredJocs = allJocs.filter((joc) => joc.title.toLowerCase().includes(searchTerm));
+      const favorites = getFavorites();
+
+      if (filteredJocs.length > 0) {
+        const cards = filteredJocs.map((joc) => createGameCard(joc, isFavorite(joc, favorites))).join('');
+        jocsList.innerHTML = `<div class="p-6 ${GRID_CLASSES}">${cards}</div>`;
+        searchResultsCount.textContent = `S'han trobat ${filteredJocs.length} jocs`;
+        searchResultsCount.style.display = 'block';
+      } else {
+        jocsList.innerHTML = `
+          <div class="${GRID_CLASSES}">
+            <div class="col-span-full text-center py-8">
+              <p class="text-xl text-gray-500">No s'han trobat jocs que coincideixin amb "${searchTerm}"</p>
+              <p class="text-gray-400 mt-2">Prova amb un altre terme de cerca</p>
+            </div>
+          </div>
+        `;
+        searchResultsCount.style.display = 'none';
+      }
+
+      paginationControls.style.display = 'none';
+    });
+  }
+
+  function setupFavoritesToggle(): void {
+    const favoritesToggle = document.getElementById('favoritesToggle') as HTMLInputElement;
+    const favoritesSection = document.getElementById('favoritesSection');
+
+    if (!favoritesToggle || !favoritesSection) return;
+
+    favoritesToggle.addEventListener('change', () => {
+      const isChecked = favoritesToggle.checked;
+      favoritesSection.style.display = isChecked ? 'block' : 'none';
+      saveToggleState(isChecked);
+    });
+  }
+
+  function init(): void {
+    setupSearch();
+    displayFavorites();
+    setupFavoritesToggle();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) init();
+  });
+  document.addEventListener('astro:page-load', init);
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'gameFavorites') displayFavorites();
+  });
+</script>
+
+<style>
+  #favoritesToggle:checked + div {
+    background-color: var(--aw-color-primary);
+  }
+  .dark #favoritesToggle + div {
+    background-color: #374151;
+  }
+  .dark #favoritesToggle:checked + div {
+    background-color: var(--aw-color-primary);
+  }
+</style>

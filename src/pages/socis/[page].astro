@@ -1,0 +1,223 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { getCollection } from 'astro:content';
+
+import SociFeatures from '~/components/widgets/SociFeatures.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const socis = await getCollection('socis');
+
+  const items = socis.map((soci) => ({
+    ...soci.data,
+    Date: Intl.DateTimeFormat('es').format(soci.data.date),
+    title: `${soci.data.name}`,
+    booked: false,
+    href: soci.slug,
+    image: soci.data.image,
+    callToAction: {
+      target: '_blank',
+      text: 'Reservar',
+      href: '/reserves',
+    },
+  }));
+
+  const sortedItems = items.sort((a, b) => a.title.localeCompare(b.title));
+
+  return paginate(sortedItems, {
+    pageSize: 9,
+  });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props as Props;
+const currentPage = page.currentPage ?? 1;
+
+const allSocis = await getCollection('socis');
+const allSociItems = allSocis
+  .map((soci) => ({
+    ...soci.data,
+    Date: Intl.DateTimeFormat('es').format(soci.data.date),
+    title: `${soci.data.name}`,
+    booked: false,
+    href: soci.slug,
+    image: soci.data.image,
+    callToAction: {
+      target: '_blank',
+      text: 'Reservar',
+      href: '/reserves',
+    },
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+
+const metadata = {
+  title: `Socis i amics${currentPage > 1 ? ` — Pàgina ${currentPage}` : ''}`,
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline=`Els socis de l'associació` title="Socis" />
+
+  <div class="max-w-xl mx-auto mb-8 px-4">
+    <div class="relative">
+      <input
+        type="text"
+        id="sociSearch"
+        placeholder="Cerca socis per nom..."
+        class="w-full py-3 px-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+      />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="allSocisData" class="hidden" data-socis={JSON.stringify(allSociItems)}></div>
+
+  <div id="socisList">
+    <SociFeatures items={page.data} />
+  </div>
+
+  <div id="paginationControls" class="flex items-center justify-center py-8">
+    <div class="flex items-center space-x-6 bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-3">
+      <div class="text-sm text-gray-600 dark:text-gray-300">
+        Pàgina {currentPage} de {page.lastPage}
+      </div>
+      <div class="flex space-x-2">
+        {
+          page.url.prev && (
+            <a
+              href={page.url.prev}
+              class="px-4 py-2 bg-white dark:bg-gray-700 rounded-md shadow hover:bg-primary-50 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center"
+            >
+              <span class="mr-1">←</span>
+            </a>
+          )
+        }
+        <div class="px-4 py-2 bg-primary text-white rounded-md font-semibold">
+          {currentPage}
+        </div>
+        {
+          page.url.next && (
+            <a
+              href={page.url.next}
+              class="px-4 py-2 bg-white dark:bg-gray-700 rounded-md shadow hover:bg-primary-50 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center"
+            >
+              <span class="ml-1">→</span>
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <div id="searchResultsCount" class="text-center pb-6 text-gray-600 dark:text-gray-300" style="display: none;"></div>
+
+  <script>
+    function setupSearch() {
+      const searchInput = document.getElementById('sociSearch');
+      const socisList = document.getElementById('socisList');
+      const paginationControls = document.getElementById('paginationControls');
+      const searchResultsCount = document.getElementById('searchResultsCount');
+      const allSocisDataElement = document.getElementById('allSocisData');
+
+      if (!searchInput || !socisList || !paginationControls || !searchResultsCount || !allSocisDataElement) {
+        return;
+      }
+
+      let allSocis = [];
+      try {
+        allSocis = JSON.parse(allSocisDataElement.getAttribute('data-socis') || '[]');
+      } catch (error) {
+        console.error('Error parsing socis data:', error);
+      }
+
+      searchInput.removeEventListener('input', searchInput._searchHandler);
+      const originalHtml = socisList.innerHTML;
+
+      const searchHandler = () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+          socisList.innerHTML = originalHtml;
+          paginationControls.style.display = '';
+          searchResultsCount.style.display = 'none';
+          return;
+        }
+
+        const filteredSocis = allSocis.filter((soci) => soci.title.toLowerCase().includes(searchTerm));
+
+        if (filteredSocis.length > 0) {
+          const template = document.createElement('template');
+          template.innerHTML = `
+            <div class="p-6 grid gap-8 gap-x-12 sm:gap-y-8 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2">
+              ${filteredSocis
+                .map(
+                  (soci) => `
+                <div class="relative flex flex-col card-glass p-6">
+                  <img alt="img" src="${soci.image}" class="h-60 object-cover object-top mb-8" />
+                  <div class="text-xl font-bold">
+                    <a href="/socis/${soci.href}">${soci.title}</a>
+                  </div>
+                  ${
+                    soci.partner_present
+                      ? `<p class="text-muted mt-2">Donat per: ${soci.partner_present}</p>`
+                      : soci.Date
+                        ? `<p class="text-muted mt-2">Des del: ${soci.Date}</p><br />`
+                        : '<br />'
+                  }
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+          `;
+          socisList.innerHTML = template.innerHTML;
+        } else {
+          socisList.innerHTML = `
+            <div class="grid gap-8 gap-x-12 sm:gap-y-8 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2">
+              <div class="col-span-full text-center py-8">
+                <p class="text-xl text-gray-500">No s'han trobat socis que coincideixin amb "${searchTerm}"</p>
+                <p class="text-gray-400 mt-2">Prova amb un altre terme de cerca</p>
+              </div>
+            </div>
+          `;
+        }
+
+        paginationControls.style.display = 'none';
+
+        if (filteredSocis.length > 0) {
+          searchResultsCount.textContent = `S'han trobat ${filteredSocis.length} socis`;
+          searchResultsCount.style.display = 'block';
+        } else {
+          searchResultsCount.style.display = 'none';
+        }
+      };
+
+      searchInput._searchHandler = searchHandler;
+      searchInput.addEventListener('input', searchHandler);
+    }
+
+    document.addEventListener('DOMContentLoaded', setupSearch);
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) setupSearch();
+    });
+    document.addEventListener('astro:page-load', setupSearch);
+  </script>
+</Layout>

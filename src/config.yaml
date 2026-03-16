@@ -1,0 +1,97 @@
+site:
+  name: Osona Juga
+  site: 'https://osonajuga.cat'
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
+
+# Default SEO metadata
+metadata:
+  title:
+    default: Osona Juga
+    template: '%s — Osona Juga'
+  description: "Associació de jocs de taula d'Osona"
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: Osona Juga
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+  twitter:
+    handle: '@osonajuga'
+    site: '@osonajuga'
+    cardType: summary_large_image
+
+i18n:
+  language: en
+  textDirection: ltr
+
+apps:
+  blog:
+    isEnabled: true
+    postsPerPage: 6
+
+    post:
+      isEnabled: true
+      permalink: '/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      robots:
+        index: true
+
+    list:
+      isEnabled: true
+      pathname: 'notícies' # Blog main path, you can change this to "articles" (/articles)
+      robots:
+        index: true
+
+    category:
+      isEnabled: true
+      pathname: 'categoria' # Category main path /category/some-category, you can change this to "group" (/group/some-category)
+      robots:
+        index: true
+
+    tag:
+      isEnabled: true
+      pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
+      robots:
+        index: false
+
+    isRelatedPostsEnabled: true
+    relatedPostsCount: 4
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: null # or "G-XXXXXXXXXX"
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
+
+  tokens:
+    default:
+      fonts:
+        sans: InterVariable
+        serif: InterVariable
+        heading: InterVariable
+      colors:
+        default: rgb(16 16 16)
+        heading: rgb(0 0 0)
+        muted: rgb(16 16 16 / 66%)
+        bgPage: rgb(255 255 255)
+        primary: rgb(123 41 104)
+        secondary: rgb(123 41 104)
+        accent: rgb(109 40 217)
+    dark:
+      fonts: {}
+      colors:
+        default: rgb(229 236 246)
+        heading: rgb(247, 248, 248)
+        muted: rgb(229 236 246 / 66%)
+        bgPage: rgb(0 12 19)
+        primary: rgb(1 97 239)
+        secondary: rgb(123 41 104)
+        accent: rgb(123 41 104)
