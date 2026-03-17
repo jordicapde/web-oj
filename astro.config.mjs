@@ -17,6 +17,7 @@ const whenExternalScripts = (items = []) =>
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://osonajuga.cat',
   output: 'static',
   integrations: [
     tailwind({
