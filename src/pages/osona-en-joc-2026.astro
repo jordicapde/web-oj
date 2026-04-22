@@ -1,0 +1,122 @@
+---
+import HeroText from '~/components/widgets/HeroText.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Osona en Joc 2026',
+};
+
+const franges = ['Tot el dia', 'Matí', 'Tarda'];
+const activitats = [
+  {
+    franja: "Tot el dia",
+    titol: "Ludoteca oberta de jocs de taula",
+    subtitol: "Jocs de taula per a totes les edats, des d'infantil fins a adults",
+    descripcio: "Vine a gaudir d'una selecció de jocs per a tothom. Pots triar el joc que més t'agradi de la nostra ludoteca i, si no el coneixes, no et preocupis: nosaltres t'ensenyem a jugar.",
+  },
+  {
+    franja: "Matí",
+    titol: "Partides de Rummikub",
+    horari: "A partir de les 11:00",
+    descripcio: "Els clàssics no moren mai. Prepara les neurones per desfer-te de tots els teus números.",
+    colaborador: "Casal d'avis de Calldetenes",
+  },
+  {
+    franja: "Tarda",
+    titol: "Partides d'escacs",
+    horari: "A partir de les 16:00",
+    descripcio: "Posa a prova la teva estratègia i habilitat. Tant si ets un jugador experimentat com si només vols provar-ho, aquest és el moment d'asseure's a la taula.",
+    colaborador: "Club d'escacs de Calldetenes",
+  }
+];
+---
+
+<Layout metadata={metadata}>
+  <HeroText 
+    tagline="Esdeveniments" 
+    title="Fira Osona en Joc 2026" 
+  />
+
+  <section class="px-4 py-12 sm:px-6 mx-auto lg:px-8 lg:py-16 max-w-4xl">
+    <div class="prose prose-lg max-w-none dark:prose-invert">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 mb-12">
+        <div>
+          <h3 class="text-secondary font-bold mb-2 mt-0">Lloc</h3>
+          <p class="m-0">
+            <strong>Calldetenes</strong><br />
+            Plaça Onze de Setembre
+          </p>
+        </div>
+        <div>
+          <h3 class="text-secondary font-bold mb-2 mt-0">Data</h3>
+          <p class="m-0">
+            <strong>30 de maig de 2026</strong><br />
+            De 10h a 14h i de 16h a 20h
+          </p>
+        </div>
+      </div>
+
+      <hr class="my-10 border-slate-200 dark:border-slate-700" />
+
+      <h2 class="text-3xl font-bold text-center mb-6">Programa d'activitats</h2>
+      
+      <div class="text-center p-10 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-dashed border-slate-400">
+        <p class="text-xl italic text-slate-600 dark:text-slate-400">
+          Estem acabant de perfilar els últims detalls per oferir-vos la millor experiència lúdica
+        </p>
+        <p class="font-bold text-secondary text-2xl mt-4">
+          Estigueu atents, ben aviat apareixerà!
+        </p>
+      </div>
+      
+      <!--
+      {franges.map((nomFranja) => (
+        // Només dibuixem la secció si hi ha activitats en aquesta franja
+        activitats.some(a => a.franja === nomFranja) && (
+          <div class="mb-16">
+            {/* Títol de secció */}
+            <div class="flex items-center mb-8">
+              <h3 class="text-2xl font-bold uppercase tracking-wider text-primary mt-0 mb-0">{nomFranja}</h3>
+              <div class="flex-grow ml-4 border-t-2 border-primary opacity-20"></div>
+            </div>
+  
+            {/* Activitats de la franja */}
+            {activitats
+              .filter(a => a.franja === nomFranja)
+              .map((activitat) => (
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm mb-6 p-6 md:p-8">
+                  <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-2xl font-bold mt-0">{activitat.titol}</h4>
+                    {activitat.horari && (
+                      <span class="bg-secondary/10 text-secondary text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap ml-4">
+                        {activitat.horari}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {activitat.subtitol && (
+                    <p class="text-primary font-medium mb-4 italic">{activitat.subtitol}</p>
+                  )}
+                  
+                  <div class="text-slate-600 dark:text-slate-400">
+                    <p>{activitat.descripcio}</p>
+                  </div>
+  
+                  {activitat.colaborador && (
+                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-sm">
+                      <span class="text-slate-500 italic text-xs uppercase tracking-widest">En col·laboració amb:</span> 
+                      <br/>
+                      <strong class="text-slate-700 dark:text-slate-300">{activitat.colaborador}</strong>
+                    </div>
+                  )}
+                </div>
+              ))
+            }
+          </div>
+        )
+      ))}
+      -->
+    </div>
+  </section>
+</Layout>
