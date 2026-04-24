@@ -6,13 +6,37 @@ const metadata = {
   title: 'Osona en Joc 2026',
 };
 
+// A confirmar:
+// - joc de rol, coupage, amics dels gats, minis, ordre de tornejos
 const franges = ['Tot el dia', 'Matí', 'Tarda'];
 const activitats = [
   {
     franja: "Tot el dia",
     titol: "Ludoteca oberta de jocs de taula",
     subtitol: "Jocs de taula per a totes les edats, des d'infantil fins a adults",
-    descripcio: "Vine a gaudir d'una selecció de jocs per a tothom. Pots triar el joc que més t'agradi de la nostra ludoteca i, si no el coneixes, no et preocupis: nosaltres t'ensenyem a jugar.",
+    descripcio: "Vine a gaudir d'una selecció de jocs per a tothom. T'ajudarem a trobar el joc perfecte per a tu i si no el coneixes, no et preocupis: nosaltres t'ensenyem a jugar.",
+  },
+  {
+    franja: "Tot el dia",
+    titol: "Demostracions de jocs de taula",
+    descripcio: "Descobreix i prova les novetats de les editorials. Nosaltres ens encarreguem d'explicar el joc, tu només l'has d'escollir.",
+    colaborador: "Devir, 2Tomatoes, Tranjis Games",
+  },
+  {
+    franja: "Tot el dia",
+    titol: "Jocs de fusta, d'exterior i tradicionals",
+    descripcio: "Torna a connectar amb els jocs de tota la vida i posa a prova la teva habilitat.",
+    colaborador: "Companyia de jocs L'Anònima",
+  },
+  {
+    franja: "Tot el dia",
+    titol: "Tornejos",
+    descripcio: "Participa als tornejos de jocs de taula, hi haurà premis per als guanyadors! Tots el jocs seran senzills i es podran aprendre abans de jugar.",
+  },
+  {
+    franja: "Tot el dia",
+    titol: "Sorteigs",
+    descripcio: "No marxeu abans d'hora, que hi haurà jocs, vals de compra i altres productes per qui participi i es quedi fins al final!",
   },
   {
     franja: "Matí",
@@ -22,12 +46,72 @@ const activitats = [
     colaborador: "Casal d'avis de Calldetenes",
   },
   {
+    franja: "Matí",
+    titol: "La Cuenta",
+    subtitol: "Torneig",
+    horari: "11:00",
+    descripcio: "La Cuenta és el joc on aneu de tapes esperant que no et toqui a tu pagar tota la ronda. Demana un altre plat i creua les dits perquè no et torni.",
+    colaborador: "2Tomatoes",
+    imatge: "https://cf.geekdo-images.com/LJ-bH8ZCrVUZpwEhzjdE-Q__original/img/vplwH-lS7OGvzalcvQH8EqFbVZk=/0x0/filters:format(png)/pic8660315.png"
+  },
+  {
+    franja: "Matí",
+    titol: "Blood on the Clocktower",
+    subtitol: "Joc de rols ocults",
+    horari: "11:30",
+    descripcio: "La millor experiència de rols ocults del moment. Els jugadors es divideixen en dos bàndols: els bons i els dolents. Sabràs trobar qui és qui abans que sigui massa tard?",
+    colaborador: "Molins de Jocs",
+    imatge: "https://cf.geekdo-images.com/HINb2nkFn5IiZxAlzQIs4g__original/img/e7izEwSmnBPiErsIF6hlWbgybBE=/0x0/filters:format(jpeg)/pic7009391.jpg"
+  },
+  {
+    franja: "Matí",
+    titol: "Agent Avenue",
+    subtitol: "Torneig",
+    horari: "13:00",
+    descripcio: "Agent Avenue és un carrera psicològica entre dos jugadors intentant atrapar-se. Qui serà més hàbil per enganyar al seu rival?",
+    colaborador: "Devir",
+    imatge: "https://cf.geekdo-images.com/qC5YwZANir1Cmg6d-1UUpQ__original/img/26YgtJFY_7vKONVD87cHDb1pWRs=/0x0/filters:format(png)/pic8427963.png"
+  },
+  {
     franja: "Tarda",
     titol: "Partides d'escacs",
     horari: "A partir de les 16:00",
     descripcio: "Posa a prova la teva estratègia i habilitat. Tant si ets un jugador experimentat com si només vols provar-ho, aquest és el moment d'asseure's a la taula.",
     colaborador: "Club d'escacs de Calldetenes",
-  }
+  },
+  {
+    franja: "Tarda",
+    titol: "Espai infantil i primera infància",
+    horari: "16:00 - 18:00",
+    descripcio: "Els més petits també tenen el seu espai per jugar i divertir-se amb joc lliure i adaptat.",
+    colaborador: "La Rutlla",
+  },
+  {
+    franja: "Tarda",
+    titol: "Blood on the Clocktower",
+    subtitol: "Joc de rols ocults",
+    horari: "17:00",
+    descripcio: "La millor experiència de rols ocults del moment. Els jugadors es divideixen en dos bàndols: els bons i els dolents. Sabràs trobar qui és qui abans que sigui massa tard?",
+    colaborador: "Molins de Jocs",
+    imatge: "https://cf.geekdo-images.com/HINb2nkFn5IiZxAlzQIs4g__original/img/e7izEwSmnBPiErsIF6hlWbgybBE=/0x0/filters:format(jpeg)/pic7009391.jpg"
+  },
+  {
+    franja: "Tarda",
+    titol: "Coyote",
+    subtitol: "Torneig",
+    horari: "17:00",
+    descripcio: "Coyote és el joc on intentes endevinar quina és la suma total de números sense saber el que tu tens al front. Dissimula i fes la teva aposta amb seguretat.",
+    colaborador: "Devir",
+    imatge: "https://cf.geekdo-images.com/SI7PmZvgnG_eGtTLjDUFXw__original/img/yCBhkklKvQiXMW_lZtFBJV6a1tE=/0x0/filters:format(jpeg)/pic6884733.jpg"
+  },
+  {
+    franja: "Tarda",
+    titol: "",
+    subtitol: "Torneig",
+    horari: "19:00",
+    descripcio: "",
+    colaborador: "2Tomatoes",
+  },
 ];
 ---
 
@@ -61,6 +145,7 @@ const activitats = [
 
       <h2 class="text-3xl font-bold text-center mb-6">Programa d'activitats</h2>
       
+      <!--
       <div class="text-center p-10 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-dashed border-slate-400">
         <p class="text-xl italic text-slate-600 dark:text-slate-400">
           Estem acabant de perfilar els últims detalls per oferir-vos la millor experiència lúdica
@@ -69,8 +154,8 @@ const activitats = [
           Estigueu atents, ben aviat apareixerà!
         </p>
       </div>
+      -->
       
-      <!--
       {franges.map((nomFranja) => (
         // Només dibuixem la secció si hi ha activitats en aquesta franja
         activitats.some(a => a.franja === nomFranja) && (
@@ -78,45 +163,60 @@ const activitats = [
             {/* Títol de secció */}
             <div class="flex items-center mb-8">
               <h3 class="text-2xl font-bold uppercase tracking-wider text-primary mt-0 mb-0">{nomFranja}</h3>
-              <div class="flex-grow ml-4 border-t-2 border-primary opacity-20"></div>
+              <div class="flex-grow ml-4 border-t-2 border-primary"></div>
             </div>
   
             {/* Activitats de la franja */}
             {activitats
               .filter(a => a.franja === nomFranja)
               .map((activitat) => (
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm mb-6 p-6 md:p-8">
-                  <div class="flex justify-between items-start mb-2">
-                    <h4 class="text-2xl font-bold mt-0">{activitat.titol}</h4>
-                    {activitat.horari && (
-                      <span class="bg-secondary/10 text-secondary text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap ml-4">
-                        {activitat.horari}
-                      </span>
-                    )}
-                  </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm mb-6 flex flex-col md:flex-row">
                   
-                  {activitat.subtitol && (
-                    <p class="text-primary font-medium mb-4 italic">{activitat.subtitol}</p>
-                  )}
-                  
-                  <div class="text-slate-600 dark:text-slate-400">
-                    <p>{activitat.descripcio}</p>
-                  </div>
-  
-                  {activitat.colaborador && (
-                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-sm">
-                      <span class="text-slate-500 italic text-xs uppercase tracking-widest">En col·laboració amb:</span> 
-                      <br/>
-                      <strong class="text-slate-700 dark:text-slate-300">{activitat.colaborador}</strong>
+                  {/* IMATGE (Només si existeix) */}
+                  {activitat.imatge && (
+                    <div class="md:w-1/3 lg:w-1/4 not-prose">
+                      <img 
+                        src={activitat.imatge} 
+                        alt={activitat.titol} 
+                        class="h-48 md:h-full w-full object-cover"
+                        loading="lazy"
+                      />
                     </div>
                   )}
+            
+                  {/* CONTINGUT DE TEXT */}
+                  <div class={`p-6 md:p-8 flex-grow ${activitat.imatge ? 'md:w-2/3 lg:w-3/4' : 'w-full'}`}>
+                    <div class="flex justify-between items-start mb-2">
+                      <h4 class="text-2xl font-bold mt-0">{activitat.titol}</h4>
+                      {activitat.horari && (
+                        <span class="bg-secondary/10 text-secondary text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap ml-4">
+                          {activitat.horari}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {activitat.subtitol && (
+                      <p class="text-primary font-medium mb-4 italic">{activitat.subtitol}</p>
+                    )}
+                    
+                    <div class="text-slate-600 dark:text-slate-400">
+                      <p>{activitat.descripcio}</p>
+                    </div>
+            
+                    {activitat.colaborador && (
+                      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-sm">
+                         <span class="text-slate-500 italic text-xs uppercase tracking-widest">En col·laboració amb:</span> 
+                         <br/>
+                         <strong class="text-slate-700 dark:text-slate-300">{activitat.colaborador}</strong>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))
             }
           </div>
         )
       ))}
-      -->
     </div>
   </section>
 </Layout>

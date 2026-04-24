@@ -182,7 +182,7 @@ const getUI = (config: Config) => {
           heading: 'rgb(0 0 0)',
           muted: 'rgb(16 16 16 / 66%)',
           bgPage: 'rgb(255 255 255)',
-          primary: 'rgb(1 97 239)',
+          primary: 'rgb(123 41 104)',
           secondary: 'rgb(123 41 104)',
           accent: 'rgb(109 40 217)',
         },
