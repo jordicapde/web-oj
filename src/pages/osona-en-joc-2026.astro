@@ -6,8 +6,12 @@ const metadata = {
   title: 'Osona en Joc 2026',
 };
 
+const entitats = [
+  { nom: 'Ajuntament de Calldetenes', logo: 'https://seu-e.cat/image/layout_set_logo?img_id=17182739&t=1776617876450' },
+];
+
 // A confirmar:
-// - joc de rol, coupage, amics dels gats, minis, ordre de tornejos
+// - joc de rol, minis, ordre de tornejos
 const franges = ['Tot el dia', 'Matí', 'Tarda'];
 const activitats = [
   {
@@ -20,13 +24,19 @@ const activitats = [
     franja: "Tot el dia",
     titol: "Demostracions de jocs de taula",
     descripcio: "Descobreix i prova les novetats de les editorials. Nosaltres ens encarreguem d'explicar el joc, tu només l'has d'escollir.",
-    colaborador: "Devir, 2Tomatoes, Tranjis Games",
+    colaborador: "Devir, 2Tomatoes, Tranjis Games, Enpeudejoc Edicions",
   },
   {
     franja: "Tot el dia",
     titol: "Jocs de fusta, d'exterior i tradicionals",
     descripcio: "Torna a connectar amb els jocs de tota la vida i posa a prova la teva habilitat.",
     colaborador: "Companyia de jocs L'Anònima",
+  },
+  {
+    franja: "Tot el dia",
+    titol: "Jocs de taula de gats",
+    descripcio: "Vine a jugar a jocs de temàtica felina i coneix la feina que fa l'associació d'Amics dels Gats.",
+    colaborador: "Amics dels Gats de Calldetenes",
   },
   {
     franja: "Tot el dia",
@@ -37,6 +47,7 @@ const activitats = [
     franja: "Tot el dia",
     titol: "Sorteigs",
     descripcio: "No marxeu abans d'hora, que hi haurà jocs, vals de compra i altres productes per qui participi i es quedi fins al final!",
+    colaborador: "Gargamel Joguines, Abacus, Llibreria Contijoch, Bonpreu Esclat, Comerç local de Calldetenes",
   },
   {
     franja: "Matí",
@@ -62,6 +73,15 @@ const activitats = [
     descripcio: "La millor experiència de rols ocults del moment. Els jugadors es divideixen en dos bàndols: els bons i els dolents. Sabràs trobar qui és qui abans que sigui massa tard?",
     colaborador: "Molins de Jocs",
     imatge: "https://cf.geekdo-images.com/HINb2nkFn5IiZxAlzQIs4g__original/img/e7izEwSmnBPiErsIF6hlWbgybBE=/0x0/filters:format(jpeg)/pic7009391.jpg"
+  },
+  {
+    franja: "Matí",
+    titol: "Coupage",
+    subtitol: "Joc de taula + tast de vins",
+    horari: "12:00",
+    descripcio: "Coupage és un joc de cartes ambientat en l'elaboració de vins. I quina millor manera de jugar-lo que acompanyat d'un tast de vins?",
+    colaborador: "Garnatxa Blanca Games, Celler Simeó Parareda",
+    imatge: "https://www.coupagejoc.com/wp-content/uploads/2025/10/Ed-final-050746-2-scaled.jpg"
   },
   {
     franja: "Matí",
@@ -113,7 +133,39 @@ const activitats = [
     title="Fira Osona en Joc 2026" 
   />
 
-  <section class="px-4 py-12 sm:px-6 mx-auto lg:px-8 lg:py-16 max-w-4xl">
+  <section class="px-4 py-4 mx-auto max-w-4xl">
+    
+    <div class="prose prose-lg dark:prose-invert max-w-none mb-12 text-center">
+      <p>
+        Benvinguts a la segona edició de la <strong>Fira Osona en Joc</strong>, l'esdeveniment que vol apropar el món lúdic i dels jocs de taula a tota la comarca d'Osona. La jornada està pensada per a tothom, des dels més petits fins als més grans (<i>perquè sí, es veu que els adults també juguen!</i>). El joc és cultura, aprenentatge i convivència. Asseieu-vos a la taula per comprovar-ho!
+        <br><br>
+        <span class="font-bold text-slate-600 dark:text-slate-400">Fet des de Calldetenes, seu de l'associació Osona Juga</span>
+      </p>
+    </div>
+
+    <hr class="my-16 border-slate-200 dark:border-slate-700" />
+
+    <div class="pb-12">
+      <h3 class="text-center text-sm font-bold uppercase tracking-widest text-slate-500 mb-8">
+        Amb el suport de
+      </h3>
+      
+      <div class="flex flex-wrap justify-center items-center gap-8 transition-all">
+        {entitats.map((entitat) => (
+          <div class="flex flex-col items-center">
+            {entitat.logo ? (
+              <img src={entitat.logo} alt={entitat.nom} class="h-12 w-auto mb-2" />
+            ) : (
+              <span class="font-bold text-slate-600 dark:text-slate-400">{entitat.nom}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Programa d'activitats -->
+  <section class="px-4 py-4 sm:px-6 mx-auto lg:px-8 lg:py-16 max-w-4xl">
     <div class="prose prose-lg max-w-none dark:prose-invert">
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 mb-12">
