@@ -11,6 +11,10 @@ export const headerData = {
       href: getPermalink('/noticies'),
     },
     {
+      text: 'Osona en Joc',
+      href: getPermalink('/osona-en-joc-2026'),
+    },
+    /*{
       text: 'Ludoteca',
       links: [
         { text: 'Els nostres jocs', href: getPermalink('/ludoteca/1') },
@@ -24,7 +28,7 @@ export const headerData = {
         { text: 'Soci del mes', href: '/socis/soci-del-mes' },
         { text: 'Amics', href: '/amics' },
       ],
-    },
+    },*/
     {
       text: 'Contacte',
       href: getPermalink('/contacte'),
